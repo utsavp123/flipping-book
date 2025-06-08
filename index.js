@@ -2589,6 +2589,36 @@ var has3d,
 
           var folding = flipMethods._foldingPage.call(this);
 
+          var pageContent = turnData.pageObjs[nextPage];
+          turnData.elementStates = turnData.elementStates || {};
+          turnData.elementStates[nextPage] = {};
+
+          pageContent.find('video, audio').each(function () {
+            var id = $(this).attr('id') || $(this).attr('name') || 'element_' + Math.random();
+            turnData.elementStates[nextPage][id] = {
+              type: 'media',
+              currentTime: this.currentTime,
+              paused: this.paused
+            };
+            this.pause();
+          });
+
+          pageContent.find('input, textarea, select').each(function () {
+            var id = $(this).attr('id') || $(this).attr('name') || 'element_' + Math.random();
+            turnData.elementStates[nextPage][id] = {
+              type: 'input',
+              value: $(this).val()
+            };
+          });
+
+          pageContent.find('iframe').each(function () {
+            var id = $(this).attr('id') || 'element_' + Math.random();
+            turnData.elementStates[nextPage][id] = {
+              type: 'iframe',
+              src: $(this).attr('src')
+            };
+          });
+
           folding.append(turnData.pageObjs[nextPage]);
           place[nextPage] = data.opts.page;
           data.folding = nextPage;
@@ -2604,6 +2634,29 @@ var has3d,
             turnData.pageObjs[data.folding].appendTo(flipData.wrapper);
           } else if (turnData.pageWrap[data.folding]) {
             turnData.pageObjs[data.folding].appendTo(turnData.pageWrap[data.folding]);
+          }
+
+          var pageContent = turnData.pageObjs[data.folding];
+          if (turnData.elementStates && turnData.elementStates[data.folding]) {
+            for (var id in turnData.elementStates[data.folding]) {
+              var state = turnData.elementStates[data.folding][id];
+              if (state.type === 'media') {
+                var media = pageContent.find('#' + id + ', [name="' + id + '"]')[0];
+                if (media) {
+                  media.currentTime = state.currentTime;
+                  if (!state.paused) media.play();
+                }
+              } else if (state.type === 'input') {
+                var input = pageContent.find('#' + id + ', [name="' + id + '"]');
+                if (input.length) input.val(state.value);
+              } else if (state.type === 'iframe') {
+                var iframe = pageContent.find('#' + id);
+                if (iframe.length && iframe.attr('src') !== state.src) {
+                  iframe.attr('src', state.src);
+                }
+              }
+            }
+            delete turnData.elementStates[data.folding];
           }
 
           if (turnData.pageWrap[data.folding]) {
