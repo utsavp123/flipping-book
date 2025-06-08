@@ -3398,20 +3398,4 @@ $.findPos = findPos;
     }
   };
 
-  // Utility to trigger events (unchanged)
-  var trigger = function(eventName, context, args) {
-    return context.trigger(eventName, args);
-  };
-
-  // Utility to create 2D points (unchanged)
-  var point2D = function(x, y) {
-    return {x: x, y: y};
-  };
-
-  // Bezier curve calculation (unchanged)
-  var bezier = function(p1, p2, p3, p4, t) {
-    return {
-      x: p1.x + (p2.x - p1.x) * t + (p3.x - p2.x) * t * t + (p4.x - p3.x) * t * t * t,
-      y: p1.y + (p2.y - p1.y) * t + (p3.y - p2.y) * t * t + (p4.y - p3.y) * t * t * t
-    };
-  };
+ 
