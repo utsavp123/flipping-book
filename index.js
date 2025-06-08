@@ -3337,3 +3337,81 @@ $.mouseEvents = mouseEvents;
 $.cssPrefix = getPrefix;
 $.cssTransitionEnd = getTransitionEnd;
 $.findPos = findPos;
+ var turnMethods = $.fn.turn.methods,
+      flipMethods = $.fn.flip.methods;
+
+  // Override _moveFoldingPage to protect the original content
+  flipMethods._moveFoldingPage = function(move) {
+    var data = this.data().f;
+
+    if (!data)
+      return;
+
+    var turn = data.opts.turn,
+        turnData = turn.data(),
+        place = turnData.pagePlace;
+
+    if (move) {
+      var nextPage = data.opts.next;
+
+      if (place[nextPage] != data.opts.page) {
+        if (data.folding)
+          flipMethods._moveFoldingPage.call(this, false);
+
+        var folding = flipMethods._foldingPage.call(this);
+
+        // Store the original content to protect it
+        if (!turnData.originalContent)
+          turnData.originalContent = {};
+        turnData.originalContent[nextPage] = turnData.pageObjs[nextPage].children().clone(true);
+
+        // Clone the content for the animation
+        var clonedContent = turnData.pageObjs[nextPage].children().clone(true);
+        folding.empty().append(clonedContent);
+        place[nextPage] = data.opts.page;
+        data.folding = nextPage;
+
+        // Hide the original page div during the animation
+        turnData.pageWrap[nextPage].css('display', 'none');
+      }
+
+      turn.turn('update');
+    } else {
+      if (data.folding) {
+        // Show the original page div after animation
+        if (turnData.pageWrap[data.folding]) {
+          turnData.pageWrap[data.folding].css('display', '');
+
+          // Restore the original content if it was modified
+          if (turnData.originalContent && turnData.originalContent[data.folding]) {
+            turnData.pageObjs[data.folding].empty().append(turnData.originalContent[data.folding]);
+            delete turnData.originalContent[data.folding];
+          }
+        }
+
+        if (data.folding in place) {
+          place[data.folding] = data.folding;
+        }
+
+        delete data.folding;
+      }
+    }
+  };
+
+  // Utility to trigger events (unchanged)
+  var trigger = function(eventName, context, args) {
+    return context.trigger(eventName, args);
+  };
+
+  // Utility to create 2D points (unchanged)
+  var point2D = function(x, y) {
+    return {x: x, y: y};
+  };
+
+  // Bezier curve calculation (unchanged)
+  var bezier = function(p1, p2, p3, p4, t) {
+    return {
+      x: p1.x + (p2.x - p1.x) * t + (p3.x - p2.x) * t * t + (p4.x - p3.x) * t * t * t,
+      y: p1.y + (p2.y - p1.y) * t + (p3.y - p2.y) * t * t + (p4.y - p3.y) * t * t * t
+    };
+  };
