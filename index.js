@@ -2589,21 +2589,40 @@ var has3d,
 
           var folding = flipMethods._foldingPage.call(this);
 
-          console.log('Cloning content of page ' + nextPage + ' for animation');
-          var clonedContent = turnData.pageObjs[nextPage].clone(true);
+          var clonedContent = turnData.pageObjs[nextPage].clone(true).css({
+            width: turnData.pageObjs[nextPage].width(),
+            height: turnData.pageObjs[nextPage].height(),
+            position: 'absolute',
+            top: 0,
+            left: 0
+          });
+
+          clonedContent.find('video, audio').each(function () {
+            this.pause();
+            $(this).attr('data-disabled', 'true');
+          });
+          clonedContent.find('iframe').each(function () {
+            $(this).attr('src', '');
+            $(this).attr('data-disabled', 'true');
+          });
+          clonedContent.find('script').remove();
+
           folding.empty().append(clonedContent);
           place[nextPage] = data.opts.page;
           data.folding = nextPage;
 
-          console.log('Hiding original page ' + nextPage);
           turnData.pageWrap[nextPage].css('display', 'none');
         }
 
         turn.turn('update');
       } else {
         if (data.folding) {
+          var folding = flipMethods._foldingPage.call(this);
+          if (folding) {
+            folding.empty();
+          }
+
           if (turnData.pageWrap[data.folding]) {
-            console.log('Showing original page ' + data.folding);
             turnData.pageWrap[data.folding].css('display', '');
           }
 
@@ -2617,22 +2636,34 @@ var has3d,
     },
 
     _showFoldedPage: function (c, animate) {
+
       var folding = flipMethods._foldingPage.call(this),
         dd = this.data(),
         data = dd.f,
         visible = data.visible;
 
       if (folding) {
+
         if (!visible || !data.point || data.point.corner != c.corner) {
-          var corner = (data.status == 'hover' || data.status == 'peel' || data.opts.turn.data().mouseAction) ? c.corner : null;
+
+          var corner = (
+            data.status == 'hover' ||
+            data.status == 'peel' ||
+            data.opts.turn.data().mouseAction) ?
+            c.corner : null;
+
           visible = false;
+
           if (trigger('start', this, [data.opts, corner]) == 'prevented')
             return false;
+
         }
 
         if (animate) {
+
           var that = this,
-            point = (data.point && data.point.corner == c.corner) ? data.point : flipMethods._c.call(this, c.corner, 1);
+            point = (data.point && data.point.corner == c.corner) ?
+              data.point : flipMethods._c.call(this, c.corner, 1);
 
           this.animatef({
             from: [point.x, point.y],
@@ -2644,33 +2675,44 @@ var has3d,
               flipMethods._fold.call(that, c);
             }
           });
+
         } else {
+
           flipMethods._fold.call(this, c);
+
           if (dd.effect && !dd.effect.turning)
             this.animatef(false);
+
         }
 
         if (!visible) {
+
           switch (data.effect) {
             case 'hard':
+
               data.visible = true;
               flipMethods._moveFoldingPage.call(this, true);
               data.fpage.show();
               if (data.opts.shadows)
                 data.bshadow.show();
+
               break;
             case 'sheet':
+
               data.visible = true;
               data.fparent.show().data().flips++;
               flipMethods._moveFoldingPage.call(this, true);
               data.fwrapper.show();
               if (data.bshadow)
                 data.bshadow.show();
+
               break;
           }
+
         }
 
         return true;
+
       }
 
       return false;
@@ -2721,6 +2763,7 @@ var has3d,
     },
 
     hideFoldedPage: function (animate) {
+
       var data = this.data().f;
 
       if (!data.point) return;
@@ -2735,6 +2778,7 @@ var has3d,
         };
 
       if (animate) {
+
         var p4 = flipMethods._c.call(this, p1.corner),
           top = (p1.corner.substr(0, 1) == 't'),
           delta = (top) ? Math.min(0, p1.y - p4.y) / 2 : Math.max(0, p1.y - p4.y) / 2,
@@ -2754,16 +2798,12 @@ var has3d,
           duration: 800,
           hiding: true
         });
+
       } else {
+
         this.animatef(false);
         hide();
-      }
 
-      if (data.folding) {
-        var turnData = data.opts.turn.data();
-        if (turnData.pageWrap[data.folding]) {
-          turnData.pageWrap[data.folding].css('display', '');
-        }
       }
     },
 
