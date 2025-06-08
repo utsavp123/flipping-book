@@ -2589,33 +2589,25 @@ var has3d,
 
           var folding = flipMethods._foldingPage.call(this);
 
-          console.log('Storing original content of page ' + nextPage);
-          if (!turnData.originalContent)
-            turnData.originalContent = {};
-          turnData.originalContent[nextPage] = turnData.pageObjs[nextPage].children().clone(true);
-
-          console.log('Cloning content of page ' + nextPage + ' to temporary div');
-          var clonedContent = turnData.pageObjs[nextPage].children().clone(true);
-          folding.empty().append(clonedContent);
+          folding.append(turnData.pageObjs[nextPage]);
           place[nextPage] = data.opts.page;
           data.folding = nextPage;
 
-          console.log('Hiding original page ' + nextPage);
           turnData.pageWrap[nextPage].css('display', 'none');
         }
 
         turn.turn('update');
       } else {
         if (data.folding) {
-          if (turnData.pageWrap[data.folding]) {
-            console.log('Showing original page ' + data.folding);
-            turnData.pageWrap[data.folding].css('display', '');
+          if (turnData.pages[data.folding]) {
+            var flipData = turnData.pages[data.folding].data().f;
+            turnData.pageObjs[data.folding].appendTo(flipData.wrapper);
+          } else if (turnData.pageWrap[data.folding]) {
+            turnData.pageObjs[data.folding].appendTo(turnData.pageWrap[data.folding]);
+          }
 
-            if (turnData.originalContent && turnData.originalContent[data.folding]) {
-              console.log('Restoring original content of page ' + data.folding);
-              turnData.pageObjs[data.folding].empty().append(turnData.originalContent[data.folding]);
-              delete turnData.originalContent[data.folding];
-            }
+          if (turnData.pageWrap[data.folding]) {
+            turnData.pageWrap[data.folding].css('display', '');
           }
 
           if (data.folding in place) {
@@ -2770,7 +2762,6 @@ var has3d,
         hide();
       }
 
-      // Show the original page after the animation
       if (data.folding) {
         var turnData = data.opts.turn.data();
         if (turnData.pageWrap[data.folding]) {
