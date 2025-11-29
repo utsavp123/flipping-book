@@ -396,8 +396,8 @@ turnMethods = {
     if (data.fparent)
       data.fparent.remove();
 
-    if (data.shadow)
-      data.shadow.remove();
+    if (data.shadowDemo)
+      data.shadowDemo.remove();
 
     this.removeData();
     data = null;
@@ -820,7 +820,7 @@ turnMethods = {
               appendTo(this);
           }
 
-          this.addClass('shadow');
+          this.addClass('shadowDemo');
 
         break;
         case 'double':
@@ -833,7 +833,7 @@ turnMethods = {
             delete data.pageObjs[0];
           }
 
-          this.removeClass('shadow');
+          this.removeClass('shadowDemo');
 
         break;
       }
@@ -1685,11 +1685,11 @@ turnMethods = {
     return this;
   },
 
-  // Updates the position and size of the flipbook's shadow
+  // Updates the position and size of the flipbook's shadowDemo
 
   _updateShadow: function() {
     
-    var view, view2, shadow,
+    var view, view2, shadowDemo,
       data = this.data(),
       width = this.width(),
       height = this.height(),
@@ -1697,9 +1697,9 @@ turnMethods = {
 
     view = this.turn('view');
 
-    if (!data.shadow) {
-      data.shadow = $('<div />', {
-          'class': 'shadow',
+    if (!data.shadowDemo) {
+      data.shadowDemo = $('<div />', {
+          'class': 'shadowDemo',
           'css': divAtt(0, 0, 0).css
         }).
         appendTo(this);
@@ -1716,13 +1716,13 @@ turnMethods = {
       view[1] = view[1] && view2[1];
     }
 
-    if (!view[0]) shadow = (data.direction=='ltr') ? 1 : 2;
-    else if (!view[1]) shadow = (data.direction=='ltr') ? 2 : 1;
-    else shadow = 3;
+    if (!view[0]) shadowDemo = (data.direction=='ltr') ? 1 : 2;
+    else if (!view[1]) shadowDemo = (data.direction=='ltr') ? 2 : 1;
+    else shadowDemo = 3;
 
-    switch (shadow) {
+    switch (shadowDemo) {
       case 1:
-        data.shadow.css({
+        data.shadowDemo.css({
           width: pageWidth,
           height: height,
           top: 0,
@@ -1730,7 +1730,7 @@ turnMethods = {
         });
         break;
       case 2:
-        data.shadow.css({
+        data.shadowDemo.css({
           width: pageWidth,
           height: height,
           top: 0,
@@ -1738,7 +1738,7 @@ turnMethods = {
         });
         break;
       case 3:
-        data.shadow.css({
+        data.shadowDemo.css({
           width: width,
           height: height,
           top: 0,
@@ -2084,8 +2084,8 @@ flipMethods = {
       gradient =  turnData.opts.gradients && (turnData.display=='single' ||
          (data.opts.page!=2 && data.opts.page!=turnData.totalPages-1));
 
-    if (gradient && !data.bshadow)
-      data.bshadow = $('<div/>', divAtt(0, 0, 1)).
+    if (gradient && !data.bshadowDemo)
+      data.bshadowDemo = $('<div/>', divAtt(0, 0, 1)).
         css({'position': '', width: this.width(), height: this.height()}).
         appendTo(data.parent);
 
@@ -2114,7 +2114,7 @@ flipMethods = {
         data.fpage.css({width: width, height: height});
         if (turnData.opts.gradients) {
           data.ashadow.css({width: width, height: height});
-          data.bshadow.css({width: width, height: height});
+          data.bshadowDemo.css({width: width, height: height});
         }
       }
 
@@ -2135,7 +2135,7 @@ flipMethods = {
           data.ashadow.css({width: width, height: height});
 
         if (flipMethods._backGradient.call(this))
-          data.bshadow.css({width: width, height: height});
+          data.bshadowDemo.css({width: width, height: height});
       }
 
       if (data.parent.is(':visible')) {
@@ -2190,7 +2190,7 @@ flipMethods = {
             hide().
             appendTo(parent);
 
-          data.bshadow = $('<div/>', divAtt(0, 0,  0));
+          data.bshadowDemo = $('<div/>', divAtt(0, 0,  0));
         }
 
       break;
@@ -2260,7 +2260,7 @@ flipMethods = {
           point.x = Math.max(Math.min(point.x, width), -width);
 
         var leftPos,
-          shadow,
+          shadowDemo,
           gradientX,
           fpageOrigin,
           parentOrigin,
@@ -2279,11 +2279,11 @@ flipMethods = {
 
             if (half) {
               leftPos = 0;
-              shadow = data.opts.next-1>0;
+              shadowDemo = data.opts.next-1>0;
               gradientX = 1;
             } else {
               leftPos = '100%';
-              shadow = data.opts.page+1<totalPages;
+              shadowDemo = data.opts.page+1<totalPages;
               gradientX = 0;
             }
 
@@ -2297,11 +2297,11 @@ flipMethods = {
 
             if (half) {
               leftPos = 0;
-              shadow = data.opts.next+1<totalPages;
+              shadowDemo = data.opts.next+1<totalPages;
               gradientX = 0;
             } else {
               leftPos = '-100%';
-              shadow = data.opts.page!=1;
+              shadowDemo = data.opts.page!=1;
               gradientX = 1;
             }
 
@@ -2328,7 +2328,7 @@ flipMethods = {
         }
 
         if (turnData.opts.gradients) {
-          if (shadow)
+          if (shadowDemo)
             data.ashadow.css({
               display: '',
               left: leftPos,
@@ -2338,21 +2338,21 @@ flipMethods = {
           else
             data.ashadow.hide();
 
-          data.bshadow.css({opacity:-relX + 1});
+          data.bshadowDemo.css({opacity:-relX + 1});
 
           if (half) {
-            if (data.bshadow.parent()[0]!=data.wrapper[0]) {
-              data.bshadow.appendTo(data.wrapper);
+            if (data.bshadowDemo.parent()[0]!=data.wrapper[0]) {
+              data.bshadowDemo.appendTo(data.wrapper);
             }
           } else {
-            if (data.bshadow.parent()[0]!=data.fpage[0]) {
-              data.bshadow.appendTo(data.fpage);
+            if (data.bshadowDemo.parent()[0]!=data.fpage[0]) {
+              data.bshadowDemo.appendTo(data.fpage);
             }
           }
-          /*data.bshadow.css({
+          /*data.bshadowDemo.css({
             backgroundColor: 'rgba(0,0,0,'+(0.1)+')'
           })*/
-          gradient(data.bshadow, point2D(gradientX * 100, 0), point2D((-gradientX + 1)*100, 0),
+          gradient(data.bshadowDemo, point2D(gradientX * 100, 0), point2D((-gradientX + 1)*100, 0),
             [[0, 'rgba(0,0,0,0.3)'],[1, 'rgba(0,0,0,0)']],2);
           
         }
@@ -2499,7 +2499,7 @@ flipMethods = {
           if (x[1])
             gradientEndPointA.y = (100-gradientEndPointA.y);
 
-          cssB['box-shadow'] = '0 0 20px rgba(0,0,0,'+(0.5*shadowVal)+')';
+          cssB['box-shadowDemo'] = '0 0 20px rgba(0,0,0,'+(0.5*shadowVal)+')';
           folding.css(cssB);
 
           gradient(data.ashadow,
@@ -2512,7 +2512,7 @@ flipMethods = {
               alpha);
 
           if (flipMethods._backGradient.call(that))
-            gradient(data.bshadow,
+            gradient(data.bshadowDemo,
                 point2D(left?0:100, top?0:100),
                 point2D(gradientEndPointB.x, gradientEndPointB.y),
                 [[0.6, 'rgba(0,0,0,0)'],
@@ -2682,7 +2682,7 @@ flipMethods = {
             flipMethods._moveFoldingPage.call(this, true);
             data.fpage.show();
             if (data.opts.shadows)
-              data.bshadow.show();
+              data.bshadowDemo.show();
 
           break;
           case 'sheet':
@@ -2691,8 +2691,8 @@ flipMethods = {
             data.fparent.show().data().flips++;
             flipMethods._moveFoldingPage.call(this, true);
             data.fwrapper.show();
-            if (data.bshadow)
-              data.bshadow.show();
+            if (data.bshadowDemo)
+              data.bshadowDemo.show();
 
           break;
         }
@@ -2716,8 +2716,8 @@ flipMethods = {
       case 'hard':
         
         if (turnData.opts.gradients) {
-          data.bshadowLoc = 0;
-          data.bshadow.remove();
+          data.bshadowDemoLoc = 0;
+          data.bshadowDemo.remove();
           data.ashadow.hide();
         }
 
@@ -2737,8 +2737,8 @@ flipMethods = {
 
         data.fwrapper.hide();
 
-        if (data.bshadow)
-          data.bshadow.hide();
+        if (data.bshadowDemo)
+          data.bshadowDemo.hide();
 
         folding.transform('');
 
