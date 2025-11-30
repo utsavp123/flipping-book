@@ -1645,7 +1645,7 @@ turnMethods = {
           
           if (data.tpage) { // Is it turning the page to `tpage`?
 
-            p.flip('hover', true).
+            p.flip('hover', false).
               flip('disable',
                 $.inArray(parseInt(page, 10), data.pageMv)==-1 &&
                 page!=newView[0] &&
@@ -1676,7 +1676,7 @@ turnMethods = {
         if (data.pages[page]) {
           data.pages[page].
             flip('disable', data.disabled || pageLocation!=1).
-            flip('hover', true).
+            flip('hover', false).
             flip('z', null);
         }
       }
