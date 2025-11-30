@@ -1676,7 +1676,7 @@ turnMethods = {
         if (data.pages[page]) {
           data.pages[page].
             flip('disable', data.disabled || pageLocation!=1).
-            flip('hover', false).
+            flip('hover', true).
             flip('z', null);
         }
       }
